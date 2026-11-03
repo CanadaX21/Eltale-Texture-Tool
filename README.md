@@ -1,6 +1,6 @@
 # Eltale Monsters Texture Tool
 
-Version 1.0
+Version 1.0.1
 
 I built this so anyone with the original game can change its textures. It exports every texture from the Japanese ROM of
 Eltale Monsters as a PNG in named folders. You edit the ones you like, and it puts them back into a new copy of the ROM
@@ -38,8 +38,9 @@ Open a terminal in a folder where you want to work. In the commands below, repla
 python path/to/export_textures.py "my rom.z64"
 ```
 
-This writes about 3,300 PNGs to a new folder, `exported_textures`. Each folder has a `_sheet.png`, a contact sheet that makes
-browsing easy.
+That's all it needs. It creates a folder called `exported_textures` in the folder you're working in and writes about 3,300 PNGs
+there, then prints the full path. Each folder has a `_sheet.png`, a contact sheet that makes browsing easy. To export somewhere else,
+add `--out FOLDER`.
 
 **2. Edit copies, not the export**
 
@@ -53,7 +54,33 @@ python path/to/import_textures.py my_folder --rom "my rom.z64" --out my_mod.z64
 ```
 
 You get `my_mod.z64` and `my_mod.z64.report.txt`, which lists every file changed and anything worth checking. Your original ROM
-is never changed. Every run starts from it, so your folder is your whole mod. Change a file and run it again.
+is never changed.
+
+## Your folder is your mod
+
+**Every build starts fresh from the original ROM and applies every PNG in your folder.** You never build on top of a modded ROM,
+and the tool refuses one if you try. So you don't apply edits one at a time. You keep them all in one folder, add to it as you go,
+and rebuild.
+
+| To do this | Do this, then run step 3 again |
+|---|---|
+| Add another edit | Copy the next PNG from `exported_textures` into your folder and edit it. Your earlier edits stay. |
+| Change an edit | Open your copy in your folder again. Don't re-copy it from `exported_textures`, or you'll replace your work with the original. |
+| Undo an edit | Delete that PNG from your folder. That texture goes back to the original. |
+| Try something on its own | Put just that PNG in a separate folder and build from that. Your main folder isn't touched. |
+
+This stays quick however big your mod gets: on my PC, a build takes about 1 second for one file and about 5 seconds for 1,000.
+
+Some tips:
+
+- **Back up your folder.** It's the only thing you can't rebuild. The ROM can always be made again from your folder and the original.
+- **Keep the export as your reference.** Don't edit inside `exported_textures`: exporting again would overwrite those files, which is why the
+  tool asks for `--overwrite` first.
+- **Use subfolders if you like,** such as `brian/` or `town_walls/`. The tool reads them all and ignores their names.
+- **Fix anything it refuses, then rerun.** One unusable file stops the build and nothing is written, so an edit can't silently go missing. The
+  message lists every problem at once.
+- **Checking your edit in the game:** reset the game or load an in-game save. An emulator save state can bring back the old textures, because
+  it restores what was already in memory. If your emulator has the ROM open, you may need to close it before rebuilding.
 
 ## The rules
 
@@ -92,6 +119,7 @@ on it and get exactly the same result.
 | `already holds an export` | Export to another folder with `--out`, or add `--overwrite` if you have no edits in it |
 | `it must stay ...` | That PNG changed size; restore its original width and height |
 | `cannot be matched` | That PNG's name lost its address; restore the name |
+| `Could not write` | Your emulator may have that ROM open; close it, or use another `--out` name |
 
 ## Known limits
 

@@ -243,11 +243,14 @@ def main():
     if not os.path.isdir(a.folder):
         raise SystemExit('%s is not a folder. Nothing was written.' % a.folder)
     rom, lines = Importer(src, a.strict, a.all_copies).run(a.folder)
-    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
-    with open(a.out, 'wb') as f:
-        f.write(rom)
-    with open(a.out + '.report.txt', 'w', encoding='utf-8') as f:
-        f.write('\n'.join(lines) + '\n')
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        with open(a.out, 'wb') as f:
+            f.write(rom)
+        with open(a.out + '.report.txt', 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines) + '\n')
+    except OSError as e:
+        raise SystemExit('Could not write "%s": %s. If an emulator has that ROM open, close it, or use another --out name.' % (a.out, e.strerror or e))
     print('\n'.join(lines))
     print('\n-> %s' % a.out)
 

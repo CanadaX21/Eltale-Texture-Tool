@@ -20,7 +20,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 NAMES_CSV = os.path.join(os.path.dirname(HERE), 'texture_names.csv')
 if not os.path.exists(NAMES_CSV) and os.path.exists(os.path.join(HERE, 'texture_names.csv')):
     NAMES_CSV = os.path.join(HERE, 'texture_names.csv')             # the handed-out tool keeps everything in one folder
-IN_PROJECT = os.path.isdir(os.path.join(ROOT, 'analysis', 'text_engine'))
+# only the scripts in analysis/scripts use the project's paths; a handed-out copy works from where it is run, wherever it was unpacked
+IN_PROJECT = os.path.isdir(os.path.join(os.path.dirname(HERE), 'text_engine'))
 JP_SHA1 = '4161b5c100ec82b0241b20ca8f81366e23564ccb'
 FMT = ['RGBA', 'YUV', 'CI', 'IA', 'I', '?5', '?6', '?7']
 BPP = [4, 8, 16, 32]
@@ -989,7 +990,7 @@ def main():
     ex.collect()
     folders = ex.write(a.out, not a.no_sheets)
     ex.coverage(a.out, folders)
-    print('%d textures in %d folders -> %s' % (len(ex.tex), len(folders), a.out))
+    print('%d textures in %d folders -> %s' % (len(ex.tex), len(folders), os.path.abspath(a.out)))
     print('Copy the ones you want to change into a folder of your own and edit them there, keeping the same width and height, then:')
     print('  python import_textures.py my_folder --rom "%s" --out my_mod.z64' % a.rom)
 
