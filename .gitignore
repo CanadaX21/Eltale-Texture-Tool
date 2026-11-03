@@ -4,6 +4,7 @@
 *.n64
 *.bps
 *.report.txt
+last_rom.txt
 exported_textures/
 my_folder/
 __pycache__/

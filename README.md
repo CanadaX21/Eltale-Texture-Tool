@@ -1,6 +1,6 @@
 # Eltale Monsters Texture Tool
 
-Version 1.0.1
+Version 1.1
 
 I built this so anyone with the original game can change its textures. It exports every texture from the Japanese ROM of
 Eltale Monsters as a PNG in named folders. You edit the ones you like, and it puts them back into a new copy of the ROM
@@ -28,9 +28,23 @@ No game data comes with this tool. You need your own legally obtained copy of th
   `.z64`, `.v64` and `.n64` byte orders all work. Any other dump, or a ROM that's already patched, is refused, because the
   addresses would be wrong.
 
-## How to use it
+## The easy way on Windows: drag and drop
 
-Open a terminal in a folder where you want to work. In the commands below, replace `path/to/` with where you unpacked this tool.
+After installing Python and Pillow:
+
+1. **Drag your ROM onto `Drop ROM here to export.bat`.** Your textures appear in a folder called `exported_textures`, next to the ROM.
+2. **Copy the PNGs you want to change into a folder of your own,** such as `my_mod`, next to the ROM, and edit them there. Keep the same
+   width and height.
+3. **Drag your folder onto `Drop folder here to build.bat`.** You get `my_mod.z64` next to the folder, ready to play.
+
+To make more changes, edit your folder and drag it on again. The tool remembers your ROM from step 1. If it can't find the ROM, it checks
+next to your folder, then asks you for it. It always checks that it's the right ROM.
+
+A file path containing `&` can stop drag and drop working. If that happens, rename the folder or use the commands below.
+
+## Using the commands
+
+Mac and Linux users, or anyone who prefers a terminal, can do the same with commands. Open a terminal in a folder where you want to work. In the commands below, replace `path/to/` with where you unpacked this tool.
 
 **1. Export the textures**
 
