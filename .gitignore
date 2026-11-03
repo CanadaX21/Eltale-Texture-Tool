@@ -1,0 +1,9 @@
+# no game data in this repository
+*.z64
+*.v64
+*.n64
+*.bps
+*.report.txt
+exported_textures/
+my_folder/
+__pycache__/

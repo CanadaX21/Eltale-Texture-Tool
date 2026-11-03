@@ -1,0 +1,47 @@
+rom,name,source,note
+0xD80E28,talk_marker_speech_bubble,"decomp symbols and how the code draws them; speech bubble, marks and staff: Mallos31's Quest 64 symbols, same art",gTalkMarkerIcon 64x29
+0xD81768,exclamation_mark,"decomp symbols and how the code draws them; speech bubble, marks and staff: Mallos31's Quest 64 symbols, same art",16x30
+0xD81B48,question_mark,"decomp symbols and how the code draws them; speech bubble, marks and staff: Mallos31's Quest 64 symbols, same art",24x30
+0xD82018,enemy_marker_staff,"decomp symbols and how the code draws them; speech bubble, marks and staff: Mallos31's Quest 64 symbols, same art",gEnemyMarkerIcon 24x42
+0xD825A0,debug_labels_time_fog,read from the image,I8 40x61
+0xD82FF0,debug_labels_camera,read from the image,I8 40x96
+0xCC85C0,ear_upper,quest64 decomp yaml (Mallos31): bytes identical,nepty 24x32
+0xCC8BC0,ear_lower,quest64 decomp yaml (Mallos31): bytes identical,nepty 16x16
+0xCC91C0,hat,quest64 decomp yaml (Mallos31): bytes identical,nepty 8x16
+0xCC92C0,face,quest64 decomp yaml (Mallos31): bytes identical,nepty 24x32
+0xCC9AC0,neck_jewel,quest64 decomp yaml (Mallos31): bytes identical,nepty 16x16
+0xCCA2C0,cape,quest64 decomp yaml (Mallos31): bytes identical,nepty 16x32
+0xCCAAC0,hand,quest64 decomp yaml (Mallos31): bytes identical,nepty 16x16
+0xCD42F0,arm_shield,quest64 decomp yaml (Mallos31): bytes identical,solvaring 24x32
+0xCD48F0,arm_cloth,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD4AF0,cape,quest64 decomp yaml (Mallos31): bytes identical,solvaring 32x32
+0xCD52F0,face,quest64 decomp yaml (Mallos31): bytes identical,solvaring 24x32
+0xCD58F0,hand,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD5C70,club_end,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD5E70,belt,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD6070,pelt_eye,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD6270,pants_cloth,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCD6870,pelt_ear,quest64 decomp yaml (Mallos31): bytes identical,solvaring 8x8
+0xCD68F0,skin,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x32
+0xCD6CF0,chest_armor,quest64 decomp yaml (Mallos31): bytes identical,solvaring 16x16
+0xCDF450,hair,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x8
+0xCDF550,face,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x32
+0xCDF950,chest,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x32
+0xCDFD50,clothes1,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x16
+0xCDFF50,clothes2,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x16
+0xCE0150,forearm,quest64 decomp yaml (Mallos31): bytes identical,zelse 8x16
+0xCE0250,pants,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x24
+0xCE0550,boots,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x32
+0xCE0950,scarf,quest64 decomp yaml (Mallos31): bytes identical,zelse 32x32
+0xCE1150,staff_gem,quest64 decomp yaml (Mallos31): bytes identical,zelse 16x16
+0xCEC480,face,quest64 decomp yaml (Mallos31): bytes identical,shilf 27x32
+0xCECB40,hair,quest64 decomp yaml (Mallos31): bytes identical,shilf 32x32
+0xCED340,dress,quest64 decomp yaml (Mallos31): bytes identical,shilf 16x64
+0xCEDB40,gold1,quest64 decomp yaml (Mallos31): bytes identical,shilf 16x8
+0xCEDC40,gold2,quest64 decomp yaml (Mallos31): bytes identical,shilf 16x8
+0xCEDE40,hand,quest64 decomp yaml (Mallos31): bytes identical,shilf 16x16
+0xCEE240,sash,quest64 decomp yaml (Mallos31): bytes identical,shilf 8x16
+0xCF7EF0,hair,quest64 decomp yaml (Mallos31): bytes identical,fargo 16x32
+0xCF85F0,face,quest64 decomp yaml (Mallos31): bytes identical,fargo 32x32
+0xD09780,grass_cloak,quest64 decomp yaml (Mallos31): bytes identical,guilty 32x32
+0xD1D5F0,wings,quest64 decomp yaml (Mallos31): bytes identical,mammon 32x32
