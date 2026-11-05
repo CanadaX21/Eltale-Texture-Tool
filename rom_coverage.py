@@ -48,7 +48,7 @@ BLOCKS = [
      'names), RAM 0x8020E6F0; picked per submap (unk84f1cs.unk12)',
      'table D_800561A0 (ROM 0x56DA0, 5 words: start, end, 3 RAM pointers into the set), func_8000A5E4; '
      'Quest monsters/*'),
-    (0x0CC2280, 0x0D2E2F0, '8 boss files (Nepty, Solvaring, Zelse, Shilf, Fargo, Guilty, Mammon, Beigis in ROM '
+    (0x0CC2280, 0x0D2E2F0, '8 boss files (Nepty, Solvaring, Zelse, Sylph, Fargo, Guilty, Mammon, Beigis in ROM '
      'order), RAM 0x802A7BC0', 'table D_803AB390 in the cutscene bank (ROM 0xD850A0, start/end by boss number), '
      'func_8000CEF0; Quest bosses/*'),
     (0x0D2E2F0, 0x0D384B0, 'dialogue + sign bank (JP; ours is relocated to 0xFC0000)', 'ROM_MAP.md section 2'),
@@ -145,7 +145,7 @@ MAP_NAMES = ['Melrode', 'Dondoran', 'Holy Plains', 'Dondoran Flats', 'Larapool',
              'ship and cabin rooms: the Pirate Ship at Skye (0-1, save point), rooms off Skye (2-4), the ferry cabins '
              '(5, 8, 9), two rooms off the World of Mammon (6-7)',
              "Blue Cave (room 2 Crystal Valley, 3-4 Epona's Cottage; 4 warps to the Pirate Ship 25/1)",
-             'Cull Hazard', 'Baragoon Tunnel (Shilf)', 'Boil Hole (Fargo)', 'Brannoch Castle', 'Connor Forest',
+             'Cull Hazard', 'Baragoon Tunnel (Sylph)', 'Boil Hole (Fargo)', 'Brannoch Castle', 'Connor Forest',
              'Glencoe Forest', 'Windward Forest', 'World of Mammon', "Nepty's lair (underwater; warp from the Isle of Skye)"]
 BOSS_NAMES = ['solvaring', 'zelse', 'nepty', 'shilf', 'fargo', 'guilty', 'beigis', 'mammon']   # boss number (NOTES)
 ITEM_NAMES = ['Spirit Light', 'Fresh Bread', 'Honey Bread', 'Healing Potion', "Dragon's Potion", 'Dew Drop',
@@ -154,7 +154,9 @@ ITEM_NAMES = ['Spirit Light', 'Fresh Bread', 'Honey Bread', 'Healing Potion', "D
               'Red Wings', 'Black Wings', 'Earth Orb', 'Wind Jade', 'Water Jewel', 'Fire Ruby', 'Eletale Book',
               'Dark Gaol Key']   # item ID = icon slot (text_engine/check_release.py ITEMS)
 MAP_IMAGE_NAMES = ['Holy Plains', 'Dondoran Flats', 'West Carmagh', 'East Limelin', 'Dindom Dries', 'Baragoon Moor']
-QUEST_MONSTERS = ['HolyPlains', 'Dondoran', 'BlueCave', 'Desert', 'Normoon', 'Mammon']
+QUEST_MONSTERS = ['HolyPlains', 'Dondoran', 'BlueCave', 'Desert', 'Normoon', 'Mammon']     # Quest's folder names: not where Eltale's sets are met
+# The maps each monster set is met on, from the encounter tables (test_import_textures.py checks this against the ROM).
+MONSTER_SET_MAPS = [[2, 5], [3, 31, 32], [7, 26, 27], [9, 11, 29, 30], [12, 28, 33], [34]]
 
 
 def entries(rom=None):

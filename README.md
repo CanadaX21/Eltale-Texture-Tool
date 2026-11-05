@@ -1,6 +1,6 @@
 # Eltale Monsters Texture Tool
 
-Version 1.1
+Version 1.1.1
 
 I built this so anyone with the original game can change its textures. It exports every texture from the Japanese ROM of
 Eltale Monsters as a PNG in named folders. You edit the ones you like, and it puts them back into a new copy of the ROM
@@ -90,7 +90,8 @@ Some tips:
 - **Back up your folder.** It's the only thing you can't rebuild. The ROM can always be made again from your folder and the original.
 - **Keep the export as your reference.** Don't edit inside `exported_textures`: exporting again would overwrite those files, which is why the
   tool asks for `--overwrite` first.
-- **Use subfolders if you like,** such as `brian/` or `town_walls/`. The tool reads them all and ignores their names.
+- **Use subfolders if you like,** such as `brian/` or `town_walls/`. The tool reads them all and ignores their names. That includes the old
+  monster folder names from before 1.1.1, like `4_normoon`, so a mod you've already started still builds the same.
 - **Fix anything it refuses, then rerun.** One unusable file stops the build and nothing is written, so an edit can't silently go missing. The
   message lists every problem at once.
 - **Checking your edit in the game:** reset the game or load an in-game save. An emulator save state can bring back the old textures, because

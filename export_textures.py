@@ -88,6 +88,30 @@ def slug(s):
     return re.sub(r'[^a-z0-9]+', '_', s.lower()).strip('_')
 
 
+def monster_set_folder(i):
+    """A monster set's folder, named after the maps it is met on."""
+    return 'monsters/%d_%s' % (i, slug(' '.join(RC.MAP_NAMES[m].split(' (')[0] for m in RC.MONSTER_SET_MAPS[i])))
+
+
+OLD_MONSTER_FOLDERS = ['0_holyplains', '1_dondoran', '2_bluecave', '3_desert', '4_normoon', '5_mammon']      # before 1.1.1
+
+
+def retire_old_monster_folders(out):
+    """An export written over an earlier one would otherwise keep these beside the new folders, as duplicates. Only their PNGs
+    go, and --overwrite has already said edits inside an export are lost. Anything else stays, with the folders that hold it."""
+    gone = 0
+    for name in OLD_MONSTER_FOLDERS:
+        top = os.path.join(out, 'monsters', name)
+        for d, _, files in os.walk(top, topdown=False):
+            for f in files:
+                if f.lower().endswith('.png'):
+                    os.remove(os.path.join(d, f))
+                    gone += 1
+            if not os.listdir(d):
+                os.rmdir(d)
+    return gone
+
+
 class Region:
     def __init__(self, name, folder, rs, re_, ram, scan_from=None):
         self.name, self.folder, self.rs, self.re, self.ram = name, folder, rs, re_, ram
@@ -153,7 +177,7 @@ class Exporter:
                     add(nm, 'npcs/' + nm[4:], s, e, 0x8020E6F0)
                 elif nm.startswith('monsters'):
                     i = int(nm[-1])
-                    add(nm, 'monsters/%d_%s' % (i, slug(RC.QUEST_MONSTERS[i])), s, e, 0x8020E6F0)
+                    add(nm, monster_set_folder(i), s, e, 0x8020E6F0)
                 elif nm.startswith('boss_'):
                     add(nm, 'bosses/' + nm[5:], s, e, 0x802A7BC0)
                 elif nm.startswith('region_'):
@@ -956,8 +980,10 @@ def main():
 
     def out_folder(default):
         out = a.out or default
-        if os.path.exists(os.path.join(out, 'manifest.csv')) and not a.overwrite:
-            raise SystemExit('"%s" already holds an export, and any edits inside it would be lost. Choose another --out, or add --overwrite. Nothing was written.' % out)
+        if os.path.exists(os.path.join(out, 'manifest.csv')):
+            if not a.overwrite:
+                raise SystemExit('"%s" already holds an export, and any edits inside it would be lost. Choose another --out, or add --overwrite. Nothing was written.' % out)
+            retire_old_monster_folders(out)     # only over a real export: a folder without a manifest may be someone's mod
         return out
     names = {}
     if os.path.exists(NAMES_CSV):
