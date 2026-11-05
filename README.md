@@ -135,4 +135,4 @@ The tool's code is under the [MIT License](LICENSE), so you can use, change and 
 - **Rainchus, vbhayden:** Quest 64 decompilation work this builds on.
 - **MARO (zmarotrix):** the idea for the viewer comes from screenshots of MARO's Quest 64 Model Viewer. None of its code is used.
 
-This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. No ROMs are distributed. You need your own copy of the game.
+This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. The people credited above didn't take part in making it, and crediting their work doesn't mean they endorse it. No ROMs are distributed. You need your own copy of the game.

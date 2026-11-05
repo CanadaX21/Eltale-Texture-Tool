@@ -158,5 +158,6 @@ rights holders.
 - **Mallos31:** the Eltale Monsters and Quest 64 decompilations, and the boss, HUD and marker texture names.
 - **Rainchus, vbhayden:** Quest 64 decompilation work this builds on.
 
-This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. No ROMs are distributed. You
+This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. The people credited
+above didn't take part in making it, and crediting their work doesn't mean they endorse it. No ROMs are distributed. You
 need your own copy of the game.
