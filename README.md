@@ -1,22 +1,21 @@
 # Eltale Monsters Texture Tool
 
-Version 1.1.1
+Version 2.0.0
 
-I built this so anyone with the original game can change its textures. It exports every texture from the Japanese ROM of
-Eltale Monsters as a PNG in named folders. You edit the ones you like, and it puts them back into a new copy of the ROM
-that you can play.
+I built this so anyone with the original game can look inside it and change how it looks. Open one page in your browser and you can walk through every model and room of the Japanese ROM of Eltale Monsters,
+replace textures, change colours, watch the change appear on the model, and build a new ROM to play. There's nothing to install.
 
-It works on the **original Japanese ROM only**, so the result is still the Japanese game. It doesn't work on my
-[English translation](https://github.com/CanadaX21/Eltale-English).
+Version 2 is a complete overhaul. If you used the old command-line scripts, see [Coming from version 1](#coming-from-version-1) and the [changelog](CHANGELOG.md).
+
+It works on the **original Japanese ROM only**, so the result is still the Japanese game. It doesn't work on my [English translation](https://github.com/CanadaX21/Eltale-English).
 
 No game data comes with this tool. You need your own legally obtained copy of the game.
 
-**Download it from the [Releases](../../releases) page** and unpack it anywhere.
+**Download it from the [Releases](../../releases) page**, unpack it anywhere, and open `Eltale Texture Tool.html`.
 
 ## What you need
 
-- **[Python 3](https://www.python.org/downloads/)**
-- **Pillow**, the Python image library. Install it with: `python -m pip install pillow`
+- **A browser.** I test in Microsoft Edge on Windows, and Chrome should behave the same. Other browsers can't open a real folder, so your work stays in the browser and files come as downloads, and I haven't tested them.
 - **The original Japanese ROM of Eltale Monsters**, this exact dump:
 
   | | |
@@ -25,128 +24,108 @@ No game data comes with this tool. You need your own legally obtained copy of th
   | MD5 | `9b456acb96291fc8b55232a08ae03346` |
   | SHA-1 | `4161b5c100ec82b0241b20ca8f81366e23564ccb` |
 
-  `.z64`, `.v64` and `.n64` byte orders all work. Any other dump, or a ROM that's already patched, is refused, because the
-  addresses would be wrong.
+  `.z64`, `.v64` and `.n64` byte orders all work. Any other dump, or a ROM that's already patched, is refused, because the addresses would be wrong.
 
-## The easy way on Windows: drag and drop
+Your ROM is read in the page and never leaves your computer. The page keeps a copy in your browser's own storage so it can reopen by itself next time. **Forget saved ROM** removes that copy.
 
-After installing Python and Pillow:
+## Change a texture
 
-1. **Drag your ROM onto `Drop ROM here to export.bat`.** Your textures appear in a folder called `exported_textures`, next to the ROM.
-2. **Copy the PNGs you want to change into a folder of your own,** such as `my_mod`, next to the ROM, and edit them there. Keep the same
-   width and height.
-3. **Drag your folder onto `Drop folder here to build.bat`.** You get `my_mod.z64` next to the folder, ready to play.
+1. **Pick a model or a room** from the **Models** or **Maps** tab on the left.
+2. **Open the Textures tab on the right.** A model shows every texture its animations can draw.
+3. **Save the one you want**, or press **Export all** to get all of that model's textures. Paint on your copy in any image editor, and keep its width and height.
+4. **Click the texture and press Replace**, or drop your PNG on it. Your file can have any name. The model changes straight away, and an orange edge marks what you've replaced.
+5. **Press Build ROM** at the top. You get a new ROM to play. Your original is never changed.
 
-To make more changes, edit your folder and drag it on again. The tool remembers your ROM from step 1. If it can't find the ROM, it checks
-next to your folder, then asks you for it. It always checks that it's the right ROM.
+**Undo replace** puts a texture back. The **Edits** tab lists everything you've changed.
 
-A file path containing `&` can stop drag and drop working. If that happens, rename the folder or use the commands below.
+## Change a colour
 
-## Using the commands
+Some textures are grey, and the game colours them when it draws them. Brian's hair is a grey texture drawn in brown. A coloured PNG can't change that, because these textures only store brightness.
 
-Mac and Linux users, or anyone who prefers a terminal, can do the same with commands. Open a terminal in a folder where you want to work. In the commands below, replace `path/to/` with where you unpacked this tool.
+So click the texture on its model, and the Textures tab shows the colours the game uses for it. Pick a new one and the model changes straight away. It's built into your ROM along with your textures.
 
-**1. Export the textures**
+## Your working folder
 
-```
-python path/to/export_textures.py "my rom.z64"
-```
+In the **Edits** tab, press **Choose folder** to keep your work as files on your computer. I recommend it. The first time you use Export all, the page asks for one anyway. The folder holds:
 
-That's all it needs. It creates a folder called `exported_textures` in the folder you're working in and writes about 3,300 PNGs
-there, then prints the full path. Each folder has a `_sheet.png`, a contact sheet that makes browsing easy. To export somewhere else,
-add `--out FOLDER`.
-
-**2. Edit copies, not the export**
-
-Copy the PNGs you want to change into a folder of your own, such as `my_folder`, and edit them there. Keep each file's width and
-height exactly the same. The end of each name is how the tool finds it (the address, size and format), so don't change that part.
-
-**3. Build your ROM**
-
-```
-python path/to/import_textures.py my_folder --rom "my rom.z64" --out my_mod.z64
-```
-
-You get `my_mod.z64` and `my_mod.z64.report.txt`, which lists every file changed and anything worth checking. Your original ROM
-is never changed.
-
-## Your folder is your mod
-
-**Every build starts fresh from the original ROM and applies every PNG in your folder.** You never build on top of a modded ROM,
-and the tool refuses one if you try. So you don't apply edits one at a time. You keep them all in one folder, add to it as you go,
-and rebuild.
-
-| To do this | Do this, then run step 3 again |
+| Folder or file | What's in it |
 |---|---|
-| Add another edit | Copy the next PNG from `exported_textures` into your folder and edit it. Your earlier edits stay. |
-| Change an edit | Open your copy in your folder again. Don't re-copy it from `exported_textures`, or you'll replace your work with the original. |
-| Undo an edit | Delete that PNG from your folder. That texture goes back to the original. |
-| Try something on its own | Put just that PNG in a separate folder and build from that. Your main folder isn't touched. |
+| `import/` | Your replacement textures, under the names the tool needs. You can keep editing them here: when you come back to the page, it notices. |
+| `tints.json` | The colours you've changed |
+| `export/` | What Export all saved, one folder per model |
+| `build/` | Your new ROM and a report of what changed |
 
-This stays quick however big your mod gets: on my PC, a build takes about 1 second for one file and about 5 seconds for 1,000.
+Your browser may ask you to allow the folder again after a restart. If you cancel the folder dialog, Export all gives you a zip instead. With no folder, your work stays in this browser, and exports and ROMs come as downloads.
 
-Some tips:
+Every build starts fresh from the original ROM, so to undo something you just take it out. **Back up your folder:** it's the only part you can't rebuild.
 
-- **Back up your folder.** It's the only thing you can't rebuild. The ROM can always be made again from your folder and the original.
-- **Keep the export as your reference.** Don't edit inside `exported_textures`: exporting again would overwrite those files, which is why the
-  tool asks for `--overwrite` first.
-- **Use subfolders if you like,** such as `brian/` or `town_walls/`. The tool reads them all and ignores their names. That includes the old
-  monster folder names from before 1.1.1, like `4_normoon`, so a mod you've already started still builds the same.
-- **Fix anything it refuses, then rerun.** One unusable file stops the build and nothing is written, so an edit can't silently go missing. The
-  message lists every problem at once.
-- **Checking your edit in the game:** reset the game or load an in-game save. An emulator save state can bring back the old textures, because
-  it restores what was already in memory. If your emulator has the ROM open, you may need to close it before rebuilding.
+## Every other texture
+
+The **Textures** tab on the left has all 3,300 textures in named folders, including what no model shows, like the font, menus and effects. You can save and replace them the same way, or export them all at once. **Add a folder** in the Edits tab takes a whole folder of edited PNGs, or a zip, as long as they keep the names Export gave them.
+
+Filter by folder, file name, ROM offset or what uses a texture.
 
 ## The rules
 
-- **Size:** width and height must stay the same. If any file can't be used, the import stops and writes nothing, so an edit
-  can't silently go missing.
-- **Colours:**
-  - **RGBA16** files (most of the game) take nearly any colour, reduced to 5 bits per channel.
-  - **CI4 and CI8** files can only use the colours already in their palette. A new colour snaps to the closest one and the
-    report counts those pixels. Bright colours can come out quite different, so check the result. Add `--strict` to stop instead.
-  - **I and IA** files are greyscale, so a coloured pixel becomes its brightness.
-  - The format is at the end of each file name.
-- **Palettes** can't be edited, because other art may share them. The `palettes` folder is only for reference.
-- **Transparency:** some files are exported opaque because the game ignores their alpha, so erasing pixels there does nothing.
-  The report tells you, and `manifest.csv` notes which files these are.
-- **Duplicate art:** the same image can be stored in several places, such as a hand texture shared between characters. Only the
-  copy you edited changes, and the report lists the others. Add `--all-copies` to change them all.
+- **Size:** width and height must stay the same. A file of the wrong size is refused right away.
+- **Colours in a texture:**
+  - **RGBA16** textures (most of the game) take nearly any colour, reduced to 5 bits per channel.
+  - **CI4 and CI8** textures can only use the colours already in their palette. A new colour moves to the closest one, and the report counts those pixels. Bright colours can come out quite different, so check the result. Tick **Stop on new colours** to refuse them instead.
+  - **I and IA** textures are grey, so a coloured pixel becomes its brightness. Change their colour as above.
+- **Palettes** can't be edited, because other art may share them.
+- **Transparency:** some textures ignore transparency in the game, so erasing pixels there does nothing. The report tells you.
+- **Duplicate art:** the same picture can be stored in several places. Only the one you replaced changes, and the report lists the others. Tick **Also change identical copies** to change them all.
 
-## Finding things
+## Look around
 
-- `manifest.csv` lists every texture: address, format, size, palette and what uses it.
-- `coverage.txt` shows what each part of the ROM holds and what the tool can't read.
-- Most files are named `tex_` plus their address, because nobody has named them yet.
-- Monsters have a folder each, using the English names. NPCs are still grouped by file, not by character.
+Everything here works without changing anything.
+
+- **Models:** Brian, 67 monsters, 8 bosses and 141 NPCs, with their animations at the game's speed. Monsters are listed by where you meet them, in story order.
+- **Maps:** all 36 maps and 258 rooms in story order, with the sky, fog, doors and where they lead, and the NPCs and bosses standing where the game puts them.
+- **Tabs on the right:** Properties, Bones, DLs (draw one display list or one object alone), Textures and Edits.
+- **Save your work elsewhere:** Save PNG, Export GIF, and Export glTF or OBJ for Blender and other 3D tools. A `.glb` keeps the skeleton and every animation.
+
+Drag to orbit, right-drag or Shift-drag to pan, scroll to zoom. W, A, S, D or the arrow keys fly, E up, Q down, and Shift goes faster. The **?** button at the top shows this any time.
+
+[docs/TECHNICAL.md](docs/TECHNICAL.md) has the formats, how each piece was checked against the game, and what isn't there yet.
+
+## Checking your edit in the game
+
+Reset the game or load an in-game save. An emulator save state can bring back the old textures, because it restores what was already in memory. If your emulator has the ROM open, you may need to close it before saving over that file.
 
 ## Sharing your mod
 
-Please don't share the modded ROM. Share your folder of edited PNGs instead: anyone with the same original ROM can run step 3
-on it and get exactly the same result.
+Please don't share the modded ROM. Share your `import` folder and `tints.json` instead: anyone with the same original ROM can build exactly the same result.
+
+## Coming from version 1
+
+Your mod folder still works. Press **Add a folder** in the Edits tab and pick it, or copy it into `import/` in your working folder. The names, offsets and rules haven't changed, and for the same files the page builds the same ROM, byte for byte.
+
+The command-line tool is still here, in the [python](python) folder, if you'd rather use it. It needs Python and Pillow, and it doesn't read `tints.json`, so it won't apply colour changes.
 
 ## If something goes wrong
 
 | Message | What to do |
 |---|---|
-| `This tool needs Pillow` | Run `python -m pip install pillow` |
-| `is not the original Japanese ROM` | Your dump differs from the one above; compare its hash |
-| `already holds an export` | Export to another folder with `--out`, or add `--overwrite` if you have no edits in it |
-| `it must stay ...` | That PNG changed size; restore its original width and height |
-| `cannot be matched` | That PNG's name lost its address; restore the name |
-| `Could not write` | Your emulator may have that ROM open; close it, or use another `--out` name |
+| `This is not the original Japanese ROM` | Your dump differs from the one above; compare its hash |
+| `this texture must stay ...` | That PNG changed size; restore its original width and height |
+| `its name does not end in ...` | A file added by folder or zip lost its name. Rename it, or use Replace, which takes any name |
+| `A ROM can't be built until these are fixed` | The Edits tab lists the files. Fix or take out each one |
+| The page asks for a folder again | Press **Reconnect** in the Edits tab. Browsers ask again after a restart |
+| The model looks wrong or nothing draws | The page needs WebGL2; check that your browser has hardware acceleration on |
 
 ## Known limits
 
-- I've tested this on Windows and Linux, and tested the resulting ROMs in Project64. Real hardware is untested.
-- A few sizes may be wrong: `coverage.txt` lists the files whose bytes overlap.
+- A ROM this page built has run in the ares emulator with its changes showing. Real hardware is untested.
+- The folder dialog and its permission prompt are the one part my automated tests can't press, so that part has only been tested on a stand-in folder.
+- Flames, spinning props and spell effects aren't drawn in the viewer. You can still change their textures.
+- Rooms show midday. The game changes its lights, sky and fog through the day.
 - Art that the game only builds while running isn't exported.
+- A few texture sizes may be wrong, and NPC folders are grouped by file, not by character.
 
 ## License
 
-The tool's code is under the [MIT License](LICENSE), so you can use, change and share it, as long as you keep the license and
-copyright notice. That covers this tool only. Eltale Monsters and its art, including anything you export from it, belong to their
-rights holders.
+The tool's code is under the [MIT License](LICENSE), so you can use, change and share it, as long as you keep the license and copyright notice. That covers this tool only. Eltale Monsters and its art, including anything you export from it, belong to their rights holders.
 
 ## Credits
 
@@ -154,6 +133,6 @@ rights holders.
 - **Claude** (Anthropic's AI model): the tool I used to build this. Claude wrote the code to my direction.
 - **Mallos31:** the Eltale Monsters and Quest 64 decompilations, and the boss, HUD and marker texture names.
 - **Rainchus, vbhayden:** Quest 64 decompilation work this builds on.
+- **MARO (zmarotrix):** the idea for the viewer comes from screenshots of MARO's Quest 64 Model Viewer. None of its code is used.
 
-This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. No ROMs are distributed. You
-need your own copy of the game.
+This is a fan project. It is not affiliated with or endorsed by Imagineer, THQ or any rights holder. No ROMs are distributed. You need your own copy of the game.

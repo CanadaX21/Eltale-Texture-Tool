@@ -8,3 +8,8 @@ last_rom.txt
 exported_textures/
 my_folder/
 __pycache__/
+# a working folder, if you keep one here
+import/
+export/
+build/
+tints.json

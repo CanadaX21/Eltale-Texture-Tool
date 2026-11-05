@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eltale Texture Tool</title>
+<style>
+:root { --bg:#14171c; --panel:#1b1f26; --line:#2c323b; --text:#d9dee5; --dim:#8a93a0; --accent:#3f8cff; --accent-bg:#1d3556; --bad:#ff7b72; color-scheme:dark; }
+* { box-sizing:border-box; }
+html,body { height:100%; margin:0; }
+body { background:var(--bg); color:var(--text); font:13px/1.4 system-ui,"Segoe UI",sans-serif; display:grid; grid-template-rows:44px auto 1fr auto 24px; grid-template-columns:270px 1fr 280px; grid-template-areas:"top top top" "left bar right" "left view right" "left time right" "foot foot foot"; }
+header { grid-area:top; display:flex; align-items:center; gap:12px; padding:0 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+header b { font-size:14px; }
+#romName { color:var(--dim); font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+#left { grid-area:left; border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0; background:var(--panel); }
+#right { grid-area:right; border-left:1px solid var(--line); display:flex; flex-direction:column; min-height:0; background:var(--panel); }
+.tabs { display:flex; border-bottom:1px solid var(--line); }
+.tabs button { flex:1; border:0; border-radius:0; background:none; color:var(--dim); padding:7px 2px; font-size:12px; border-bottom:2px solid transparent; }
+.tabs button.on { color:var(--text); border-bottom-color:var(--accent); background:none; }
+.panel { display:none; flex:1; overflow:auto; padding:10px 12px; min-height:0; }
+.panel.on { display:block; }
+.tree div { font-family:ui-monospace,Consolas,monospace; font-size:11px; color:var(--dim); white-space:nowrap; padding:1px 2px; cursor:pointer; }
+.tree div:hover { background:#232831; }
+.tree div.sel { background:var(--accent-bg); color:var(--text); }
+.dlgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(52px,1fr)); gap:4px; margin:6px 0; }
+.dlgrid button { padding:2px 0; font-family:ui-monospace,Consolas,monospace; font-size:11px; }
+.objlist div { font-family:ui-monospace,Consolas,monospace; font-size:11px; padding:1px 3px; cursor:pointer; white-space:nowrap; }
+.objlist div:hover { background:#232831; }
+.objlist div.sel { background:var(--accent-bg); }
+.objlist em { color:var(--dim); font-style:normal; }
+.hint { color:var(--dim); font-size:12px; margin:0 0 6px; }
+.texgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(58px,1fr)); gap:4px; }
+.texgrid canvas, #texPreview canvas { background:conic-gradient(#3a3f47 25%,#2a2e35 0 50%,#3a3f47 0 75%,#2a2e35 0) 0 0/10px 10px; image-rendering:pixelated; cursor:pointer; }
+.texgrid canvas { width:100%; height:58px; object-fit:contain; border:1px solid var(--line); }
+.texgrid canvas.sel { border-color:var(--accent); }
+#texPreview canvas { width:100%; max-height:190px; object-fit:contain; cursor:default; display:block; margin-bottom:6px; }
+.texgrid canvas.edited, #texView canvas.edited { border-color:#ffb454; box-shadow:0 0 0 1px #ffb454; }
+.btnrow { display:flex; gap:6px; margin:6px 0; flex-wrap:wrap; }
+.btnrow button { flex:1; min-width:90px; }
+button:disabled { opacity:.45; cursor:default; }
+#texNote, #editNote { color:#ffb454; font-size:12px; margin:4px 0; min-height:0; white-space:pre-wrap; }
+#editList div { display:flex; justify-content:space-between; gap:6px; font-family:ui-monospace,Consolas,monospace; font-size:11px; padding:1px 3px; cursor:pointer; }
+#editList div:hover { background:#232831; }
+#editList span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#editList button { padding:0 5px; flex:none; }
+#report { white-space:pre-wrap; font-size:11px; color:var(--dim); margin:8px 0 0; font-family:ui-monospace,Consolas,monospace; }
+.check { display:flex; align-items:center; gap:6px; color:var(--dim); font-size:12px; margin:3px 0; }
+#romStem { width:100%; margin:4px 0; }
+#texView { display:none; position:absolute; inset:0; overflow:auto; padding:12px; background:var(--bg); }
+#texView .cells { display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:8px; }
+#texView figure { margin:0; cursor:pointer; text-align:center; font:10px ui-monospace,Consolas,monospace; color:var(--dim); }
+#texView canvas { width:100%; height:96px; object-fit:contain; image-rendering:pixelated; border:1px solid var(--line); background:conic-gradient(#3a3f47 25%,#2a2e35 0 50%,#3a3f47 0 75%,#2a2e35 0) 0 0/10px 10px; }
+#texView figure.sel canvas { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+body.tex-mode #texView { display:block; }
+body.tex-mode #texGrid, body.tex-mode #sourceRow, body.tex-mode #tabProps, body.tex-mode #tabBones, body.tex-mode #tabDls, body.tex-mode #bar > *, body.tex-mode #time > * { display:none !important; }
+body.tex-mode #bar > #texBar { display:flex !important; }
+#texBar { display:none; gap:6px; align-items:center; }
+#forget { margin-left:auto; background:none; border:0; color:var(--dim); }
+#forget:hover { color:var(--text); }
+#bgColor { width:30px; height:26px; padding:1px; background:#262b33; border:1px solid var(--line); border-radius:4px; }
+#gifBox { display:flex; align-items:center; gap:6px; }
+#gifBox label { color:var(--dim); font-size:12px; display:flex; align-items:center; gap:3px; }
+body.transparent #view { background:conic-gradient(#3a3f47 25%,#2a2e35 0 50%,#3a3f47 0 75%,#2a2e35 0) 0 0/20px 20px; }
+#bar { grid-area:bar; display:flex; align-items:center; gap:6px; padding:0 10px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+#view { grid-area:view; position:relative; min-height:0; min-width:0; overflow:hidden; }
+canvas { display:block; width:100%; height:100%; touch-action:none; cursor:grab; }
+canvas:active { cursor:grabbing; }
+#time { grid-area:time; display:flex; align-items:center; gap:10px; padding:0 10px; border-top:1px solid var(--line); }
+#time input[type=range] { flex:1; min-width:60px; accent-color:var(--accent); }
+#frameLabel { font-family:ui-monospace,Consolas,monospace; color:var(--dim); white-space:nowrap; }
+footer { grid-area:foot; display:flex; align-items:center; padding:0 12px; gap:14px; border-top:1px solid var(--line); color:var(--dim); font-size:12px; background:var(--panel); }
+button,label.file,select { background:#262b33; color:var(--text); border:1px solid var(--line); border-radius:4px; padding:4px 10px; font:inherit; cursor:pointer; }
+button:hover,label.file:hover { border-color:#47505c; }
+button.on { background:var(--accent-bg); border-color:var(--accent); }
+label.file.primary, button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+button:disabled { opacity:.45; cursor:default; }
+h3 { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); margin:0 0 6px; font-weight:600; }
+.section { padding:10px 12px; border-bottom:1px solid var(--line); }
+#anims { flex:1 1 40%; overflow:auto; min-height:0; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+#models { flex:1 1 45%; overflow:auto; min-height:0; font-size:12px; }
+#models .group { padding:6px 12px 2px; color:var(--dim); font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+#models .row { display:flex; justify-content:space-between; gap:8px; padding:2px 12px; cursor:pointer; white-space:nowrap; }
+#models .row:hover { background:#232831; }
+#models .row.sel { background:var(--accent-bg); }
+#models em { color:var(--dim); font-style:normal; font-family:ui-monospace,Consolas,monospace; font-size:11px; }
+input[type=search] { width:100%; margin-top:6px; background:#262b33; color:var(--text); border:1px solid var(--line); border-radius:4px; padding:4px 8px; font:inherit; }
+#anims div { padding:2px 12px; cursor:pointer; white-space:nowrap; }
+#anims div:hover { background:#232831; }
+#anims div.sel { background:var(--accent-bg); }
+#anims em { color:var(--dim); font-style:normal; }
+dl { display:grid; grid-template-columns:auto 1fr; gap:3px 10px; margin:0 0 14px; }
+dt { color:var(--dim); }
+dd { margin:0; text-align:right; font-family:ui-monospace,Consolas,monospace; font-size:12px; overflow-wrap:anywhere; }
+#bones { font-family:ui-monospace,Consolas,monospace; font-size:11px; color:var(--dim); white-space:pre; overflow-x:auto; margin:0; }
+#open { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:var(--bg); text-align:center; }
+#open.hidden { display:none; }
+#open div { max-width:440px; }
+#open p { color:var(--dim); }
+#open.drag { outline:2px dashed var(--accent); outline-offset:-12px; }
+#err { color:var(--bad); }
+#labels { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.door { position:absolute; transform:translate(-50%,-100%); white-space:nowrap; font-size:11px; line-height:1.2; padding:1px 4px; border-radius:3px; background:rgba(10,14,20,.72); color:#ffd479; z-index:1; }
+.door.in { color:#8ec7ff; transform:translate(-50%,0); z-index:0; }
+#sourceRow { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+#sourceRow h3 { margin:0; }
+#sourceRow select { flex:1; min-width:0; }
+body.map-mode #sourceRow { display:none; }
+body.map-mode #time > *, body.map-mode #tSkel, body.map-mode #tInPlace, body.map-mode #tabBones, #tDoors, #tActors, #tN64, #tSky, #tFog { display:none; }
+body.map-mode #tDoors, body.map-mode #tActors, body.map-mode #tN64, body.map-mode #tSky, body.map-mode #tFog { display:inline-block; }
+body.tex-mode #exportAll { display:none; }
+#version { color:var(--dim); font-size:11px; }
+#helpBtn { width:28px; padding:3px 0; }
+#help { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:20; }
+#help[hidden] { display:none; }
+#help > div { background:var(--panel); border:1px solid var(--line); border-radius:8px; width:min(640px,calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; padding:18px 22px; }
+#help h2 { margin:0 0 10px; font-size:18px; }
+#help h3 { margin:14px 0 4px; }
+#help p, #help li { color:var(--text); margin:4px 0; }
+#help ol { margin:4px 0; padding-left:20px; }
+#help button { margin-top:12px; }
+.tintrow { display:flex; align-items:center; gap:6px; margin:4px 0; font-size:12px; color:var(--dim); }
+.tintrow input { width:30px; height:24px; padding:1px; background:#262b33; border:1px solid var(--line); border-radius:4px; }
+.tintrow button { padding:1px 6px; margin-left:auto; }
+.tintrow.changed span { color:#ffb454; }
+#mapHelp p { color:var(--dim); margin:0; }
+body.bare { display:block; }
+body.bare > :not(#view):not(script) { display:none; }
+body.bare #view { position:fixed; inset:0; }
+@media (max-width:760px) {
+  body { grid-template-columns:1fr; grid-template-rows:44px auto 260px 1fr 44px 24px; grid-template-areas:"top" "bar" "left" "view" "time" "foot"; }
+  #right { display:none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <b>Eltale Texture Tool</b> <span id="version">2.0.0</span>
+  <label class="file primary">Open ROM<input id="romInput" type="file" accept=".z64,.v64,.n64" hidden></label>
+  <span id="romName"></span>
+  <button id="forget" hidden title="Remove the copy of your ROM this browser keeps so it can reopen it">Forget saved ROM</button>
+  <button id="buildTop" class="primary" disabled title="A new ROM with your replaced textures and colours">Build ROM</button>
+  <button id="helpBtn" title="How this works" aria-label="Help">?</button>
+</header>
+<aside id="left">
+  <div id="leftTabs" class="tabs"><button data-side="models" class="on">Models</button><button data-side="maps">Maps</button><button data-side="textures">Textures</button></div>
+  <div class="section">
+    <div id="sourceRow"><h3><label for="source">Source</label></h3>
+    <select id="source"><option value="brian">Brian</option><option value="monster">Monsters</option><option value="boss">Bosses</option><option value="npc">NPCs</option></select></div>
+    <input id="modelFilter" type="search" placeholder="Filter by name or place" aria-label="Filter by name or place">
+  </div>
+  <div id="models"></div>
+  <div class="section" style="border-bottom:0;border-top:1px solid var(--line);padding-bottom:4px"><h3><span id="listTitle">Animations</span> <span id="animCount"></span></h3>
+    <input id="animFilter" type="search" placeholder="Filter" aria-label="Filter this list"></div>
+  <div id="anims"></div>
+</aside>
+<nav id="bar">
+  <button id="tLight" class="on">Lighting</button>
+  <button id="tFilter" class="on">Filtering</button>
+  <button id="tCull" class="on">Culling</button>
+  <button id="tN64" class="on" title="On: each surface's own z compare, z update and decal offset, as the game sets them. Off: a plain depth buffer.">N64 depth</button>
+  <button id="tSky" class="on" title="The sky the game draws behind this room, at midday">Sky</button>
+  <button id="tFog" title="The game's fog at midday, by distance from the camera. Fly close to see it: from far outside a room, everything is deep in fog">Fog</button>
+  <button id="tDoors" class="on" title="Show where each door leads, and where you arrive">Doors</button>
+  <button id="tActors" class="on" title="The NPCs and boss the game places in this room, in their idle">Actors</button>
+  <button id="tSkel">Skeleton</button>
+  <button id="tInPlace" title="Hold the root part's x and z still, as DrawModel's flag 1 does. The game does this for every monster.">In place</button>
+  <button id="frameBtn">Frame</button>
+  <button id="tTransparent" title="No background: Save PNG keeps it transparent">Transparent</button>
+  <input id="bgColor" type="color" value="#13171c" title="Background colour" aria-label="Background colour">
+  <div id="texBar"><button id="exportWhole">Export all 3,300 textures</button><button id="exportFolder">Export this folder</button></div>
+  <button id="savePng">Save PNG</button>
+  <button id="exportGlb" title="A model: its skeleton and every animation. A room: its geometry, with doors and entrances as named points. For Blender and most 3D tools.">Export glTF</button>
+  <button id="exportObj" title="This pose or room as OBJ, MTL and PNGs in a zip, for tools that take OBJ. No bones, animation or baked lighting.">Export OBJ</button>
+</nav>
+<main id="view">
+  <canvas id="gl"></canvas>
+  <div id="labels"></div>
+  <div id="texView"><div class="cells" id="texCells"></div></div>
+  <div id="open"><div>
+    <h2 style="margin:0 0 8px">Open your Eltale Monsters ROM</h2>
+    <p>Choose or drop your own copy of the original Japanese ROM (.z64, .v64 or .n64). It is read here in your browser and never leaves your computer. Press the ? at the top right for how this works.</p>
+    <p id="err"></p>
+  </div></div>
+</main>
+<div id="time">
+  <button id="stop" title="Stop, back to frame 0">■</button>
+  <button id="play" class="primary">Pause</button>
+  <button id="tLoop" class="on" title="Off: play the animation once, then stop on frame 0">Loop</button>
+  <input id="scrub" type="range" min="0" max="0" value="0" step="1" aria-label="Frame">
+  <span id="frameLabel">frame 0 / 0</span>
+  <select id="speed" aria-label="Speed"><option value="1">1×</option><option value="0.5">½×</option><option value="0.25">¼×</option><option value="2">2×</option></select>
+  <div id="gifBox">
+    <select id="gifSize" aria-label="GIF size"><option value="320,240">320 × 240</option><option value="480,360" selected>480 × 360</option><option value="640,480">640 × 480</option></select>
+    <label><input id="gifTransparent" type="checkbox"> Transparent</label>
+    <button id="exportGif" title="This animation, one loop at the game's speed">Export GIF</button>
+  </div>
+</div>
+<aside id="right">
+  <div id="tabs" class="tabs">
+    <button id="tabProps" data-tab="props" class="on">Properties</button><button id="tabBones" data-tab="bones">Bones</button><button id="tabDls" data-tab="dls">DLs</button><button data-tab="tex">Textures</button><button id="tabEdits" data-tab="edits">Edits</button>
+  </div>
+  <div id="panel-props" class="panel on">
+    <h3>Info</h3>
+    <dl id="props"></dl>
+    <div id="mapHelp"><h3>Controls</h3><p>Drag to orbit, right-drag or Shift-drag to pan, scroll to zoom. W, A, S, D or the arrow keys fly the camera, E or Space up, Q or C down, hold Shift to go faster.</p></div>
+  </div>
+  <div id="panel-bones" class="panel">
+    <p class="hint">Click a bone to highlight it on the skeleton.</p>
+    <div id="bones" class="tree"></div>
+    <dl id="boneInfo" style="margin-top:10px"></dl>
+  </div>
+  <div id="panel-dls" class="panel"><div id="dlBox"></div></div>
+  <div id="panel-tex" class="panel">
+    <div class="btnrow"><button id="exportAll">Export all</button></div>
+    <p id="texNote"></p>
+    <div id="texPreview"></div>
+    <p class="hint" id="texHint"></p>
+    <div id="texGrid" class="texgrid"></div>
+  </div>
+  <div id="panel-edits" class="panel">
+    <h3>Working folder</h3>
+    <p class="hint" id="workInfo"></p>
+    <div class="btnrow"><button id="workChoose">Choose folder</button><button id="workReconnect" hidden>Reconnect</button><button id="workLeave" hidden>Stop using it</button></div>
+    <h3>Replaced textures</h3>
+    <p id="editNote"></p>
+    <div id="editList"></div>
+    <div class="btnrow"><button id="addFolder" title="A folder of edited PNGs with the names Export gave them">Add a folder</button><button id="addFiles" title="Edited PNGs, or a zip of them, with the names Export gave them">Add files or a zip</button></div>
+    <label class="check"><input id="optPreview" type="checkbox" checked> Show them on the models</label>
+    <label class="check" title="Otherwise a colour not in a texture's palette moves to the nearest one, and the report says how many did"><input id="optStrict" type="checkbox"> Stop on new colours</label>
+    <label class="check" title="The same picture can be stored in more than one place. Otherwise only the one you replaced changes, and the report lists the others"><input id="optCopies" type="checkbox"> Also change identical copies</label>
+    <h3 style="margin-top:12px">New ROM</h3>
+    <input id="romStem" type="text" value="my_mod" aria-label="New ROM's name">
+    <div class="btnrow"><button id="buildRom" class="primary" disabled>Build ROM</button><button id="saveReport" disabled>Save report</button></div>
+    <pre id="report"></pre>
+  </div>
+  <input id="replaceInput" type="file" accept=".png" hidden>
+  <input id="addFilesInput" type="file" accept=".png,.zip" multiple hidden>
+  <input id="addFolderInput" type="file" webkitdirectory hidden>
+</aside>
+<footer><span id="status">No ROM open</span></footer>
+<script src="tool/model_core.js"></script>
+<script src="tool/export.js"></script>
+<script src="tool/renderer.js"></script>
+<div id="help" hidden><div role="dialog" aria-label="How this works">
+  <h2>How this works</h2>
+  <p>Everything happens in this page, on your computer. Your ROM is never changed and never leaves it.</p>
+  <h3>Look around</h3>
+  <p><b>Models</b> has Brian, monsters, bosses and NPCs with their animations. <b>Maps</b> has every room with its doors, actors and sky. Drag to orbit, right-drag or Shift-drag to pan, scroll to zoom. W, A, S, D or the arrow keys fly, E up, Q down, hold Shift to go faster.</p>
+  <h3>Change a texture</h3>
+  <ol>
+    <li>Pick a model or room, and open the <b>Textures</b> tab on the right.</li>
+    <li>Save one texture, or <b>Export all</b> of them, and paint on the copy. Keep its width and height.</li>
+    <li>Click the texture and press <b>Replace</b>, or drop your PNG on it. The model changes at once.</li>
+    <li>Press <b>Build ROM</b>. You get a new ROM to play.</li>
+  </ol>
+  <h3>Change a colour</h3>
+  <p>Some textures are grey, and the game colours them. Click one on its model: the Textures tab shows its colours, and you can pick new ones.</p>
+  <h3>Your work</h3>
+  <p>The <b>Edits</b> tab lists everything you've changed. Choose a working folder there to keep your work as files on your computer; otherwise it stays in this browser. The <b>Textures</b> tab on the left has all 3,300 textures, including the font and menus.</p>
+  <button id="helpClose" class="primary">Close</button>
+</div></div>
+<script src="tool/texture_table.js"></script>
+<script src="tool/textures.js"></script>
+<script src="tool/workspace.js"></script>
+<script src="tool/app.js"></script>
+</body>
+</html>
